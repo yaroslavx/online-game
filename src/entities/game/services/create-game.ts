@@ -2,6 +2,7 @@ import { gameRepository } from "@/entities/game/repositories/game";
 import { GameStatus } from "@prisma/client";
 import { PlayerEntity } from "@/entities/game/domain";
 import cuid from "cuid";
+import { left, right } from "@/shared/lib/either";
 
 export async function createGame(player: PlayerEntity) {
   const playerGames = await gameRepository.gamesList({
@@ -14,10 +15,7 @@ export async function createGame(player: PlayerEntity) {
   );
 
   if (isGameInIdleStatue) {
-    return {
-      type: "error",
-      error: "player can now create more than one game",
-    } as const;
+    return left("can-create-only-one-game" as const);
   }
 
   const createdGame = await gameRepository.createGame({
@@ -25,5 +23,6 @@ export async function createGame(player: PlayerEntity) {
     creator: player,
     status: GameStatus.idle,
   });
-  return createdGame;
+
+  return right(createdGame);
 }
