@@ -9,6 +9,7 @@ import { db } from "@/shared/lib/db";
 import { Game, GameStatus, Prisma, User } from "@prisma/client";
 import { z } from "zod";
 import GameWhereInput = Prisma.GameWhereInput;
+import { removePassword } from "@/shared/lib/password";
 
 async function gamesList(where?: GameWhereInput): Promise<GameEntity[]> {
   const games = await db.game.findMany({
@@ -24,9 +25,10 @@ const fieldScheme = z.array(z.union([z.string(), z.null()]));
 function dbGameToGameEntity(
   game: Game & { players: User[]; winner?: User | null },
 ): GameEntity {
+  const players = game.players.map(removePassword);
   switch (game.status) {
     case GameStatus.idle:
-      const [creator] = game.players;
+      const [creator] = players;
       if (!creator) {
         throw new Error("game should have a creator");
       }
@@ -39,7 +41,7 @@ function dbGameToGameEntity(
     case GameStatus.gameOverDraw:
       return {
         id: game.id,
-        players: game.players,
+        players,
         status: game.status,
         field: fieldScheme.parse(game.field),
       } satisfies GameInProgressEntity | GameOverDrawEntity;
@@ -49,10 +51,10 @@ function dbGameToGameEntity(
       }
       return {
         id: game.id,
-        players: game.players,
+        players,
         status: game.status,
         field: fieldScheme.parse(game.field),
-        winner: game.winner,
+        winner: removePassword(game.winner),
       } satisfies GameOverEntity;
   }
 }
