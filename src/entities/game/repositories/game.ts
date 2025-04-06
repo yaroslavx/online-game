@@ -20,6 +20,22 @@ async function gamesList(where?: GameWhereInput): Promise<GameEntity[]> {
   return games.map((game) => dbGameToGameEntity(game));
 }
 
+async function createGame(game: GameIdleEntity): Promise<GameEntity> {
+  const createdGame = await db.game.create({
+    data: {
+      status: game.status,
+      id: game.id,
+      field: Array(9).fill(null),
+      players: {
+        connect: { id: game.creator.id },
+      },
+    },
+    include: { players: true, winner: true },
+  });
+
+  return dbGameToGameEntity(createdGame);
+}
+
 const fieldScheme = z.array(z.union([z.string(), z.null()]));
 
 function dbGameToGameEntity(
@@ -59,4 +75,4 @@ function dbGameToGameEntity(
   }
 }
 
-export const gameRepository = { gamesList };
+export const gameRepository = { gamesList, createGame };
