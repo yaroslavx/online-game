@@ -41,7 +41,7 @@ function Button({
   variant,
   size,
   asChild = false,
-  error: result,
+  error,
   children,
   ...props
 }: React.ComponentProps<"button"> &
@@ -58,11 +58,11 @@ function Button({
       {...props}
     >
       {children}
-      {result &&
-        matchEither(result, {
+      {error &&
+        matchEither(error, {
           right: () => null,
           left: (e) => (
-            <div className="absolute left-0 top-[calc(100%_+_4px)] text-secondary">
+            <div className="absolute left-0 top-[calc(100%_+_4px)] text-primary">
               {e}
             </div>
           ),

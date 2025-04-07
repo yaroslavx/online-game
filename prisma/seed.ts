@@ -17,30 +17,6 @@ async function main() {
       passwordHash: "hash",
     },
   });
-  await prisma.game.create({
-    data: {
-      field: Array(9).fill(null),
-      id: "game-2",
-      status: GameStatus.idle,
-      players: {
-        connect: {
-          id: user.id,
-        },
-      },
-    },
-  });
-  await prisma.game.create({
-    data: {
-      field: Array(9).fill(null),
-      id: "game-1",
-      status: GameStatus.idle,
-      players: {
-        connect: {
-          id: user2.id,
-        },
-      },
-    },
-  });
 }
 main()
   .then(async () => {

@@ -16,7 +16,7 @@ export function CreateButton() {
   return (
     <Button
       disabled={isPending}
-      onClick={dispatch}
+      onClick={() => startTransition(dispatch)}
       error={mapLeft(
         state,
         (e) =>
