@@ -76,7 +76,7 @@ export default function SignUpPage() {
       //   }),
       // })
 
-      // if (!response.ok) throw new Error('Registration failed')
+      // if (!response.ok) throw new ErrorMessage('Registration failed')
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -63,7 +63,7 @@ export default function SignInPage() {
       //   }),
       // })
 
-      // if (!response.ok) throw new Error('Authentication failed')
+      // if (!response.ok) throw new ErrorMessage('Authentication failed')
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));

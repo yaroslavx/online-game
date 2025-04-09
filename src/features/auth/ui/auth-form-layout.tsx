@@ -6,92 +6,48 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/shared/ui/form";
-import { Input } from "@/shared/ui/input";
-import Link from "next/link";
-import { Button } from "@/shared/ui/button";
+import { Form } from "@/shared/ui/form";
 import { ReactNode } from "react";
+import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
-export function AuthFormLayout({}: {
+export function AuthFormLayout({
+  description,
+  fields,
+  title,
+  link,
+  formInstance,
+  onSubmit,
+  actions,
+  error,
+}: {
   title: string;
   description: string;
-  inputs: ReactNode;
+  fields: ReactNode;
   actions: ReactNode;
-  links: ReactNode;
+  link: ReactNode;
+  formInstance: UseFormReturn;
+  onSubmit: SubmitHandler<FieldValues>;
+  error: ReactNode;
 }) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
-        <CardDescription>
-          Enter your credentials to access your account
-        </CardDescription>
+        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="john.doe@example.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
-            </Button>
+        <Form {...formInstance}>
+          <form
+            onSubmit={formInstance.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
+            {fields}
+            {!!error && error}
+            {actions}
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-center">
-        <p className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/signup"
-            className="text-primary font-medium hover:underline"
-          >
-            Sign up
-          </Link>
-        </p>
-      </CardFooter>
+      <CardFooter className="flex justify-center">{link}</CardFooter>
     </Card>
   );
 }
