@@ -14,35 +14,28 @@ import { right } from "@/shared/lib/either";
 import { SubmitButton } from "@/features/auth/ui/submit-button";
 import { ErrorMessage } from "@/features/auth/ui/error-message";
 
-const formSchema = z
-  .object({
-    login: z.string().min(2, {
-      message: "Login must be at least 2 characters.",
-    }),
-    password: z.string().min(8, {
-      message: "Password must be at least 8 characters.",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+export const signUpFormSchema = z.object({
+  login: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+});
 
 export function SignUpForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof signUpFormSchema>>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       login: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
-  async function handleSubmit(_: z.infer<typeof formSchema>) {
+  async function onSubmit(_: z.infer<typeof signUpFormSchema>) {
     setIsLoading(true);
 
     try {
@@ -96,7 +89,7 @@ export function SignUpForm() {
         />
       }
       formInstance={form}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       error={<ErrorMessage error={right(null)} />}
     />
   );

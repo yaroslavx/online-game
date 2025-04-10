@@ -9,6 +9,9 @@ import {
 import { Form } from "@/shared/ui/form";
 import { ReactNode } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
+import * as z from "zod";
+import { signInFormSchema } from "@/features/auth/containers/sign-in-form";
+import { signUpFormSchema } from "@/features/auth/containers/sign-up-form";
 
 export function AuthFormLayout({
   description,
@@ -25,7 +28,9 @@ export function AuthFormLayout({
   fields: ReactNode;
   actions: ReactNode;
   link: ReactNode;
-  formInstance: UseFormReturn;
+  formInstance: UseFormReturn<
+    z.infer<typeof signInFormSchema | typeof signUpFormSchema>
+  >;
   onSubmit: SubmitHandler<FieldValues>;
   error: ReactNode;
 }) {
