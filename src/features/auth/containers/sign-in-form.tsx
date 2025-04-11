@@ -86,7 +86,6 @@ export function SignInForm() {
         />
       }
       formInstance={form}
-      onSubmit={onSubmit}
       error={<ErrorMessage error={right(null)} />}
     />
   );

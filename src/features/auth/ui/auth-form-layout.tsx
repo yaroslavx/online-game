@@ -6,9 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
-import { Form } from "@/shared/ui/form";
 import { ReactNode } from "react";
-import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import * as z from "zod";
 import { signInFormSchema } from "@/features/auth/containers/sign-in-form";
 import { signUpFormSchema } from "@/features/auth/containers/sign-up-form";
@@ -18,8 +17,7 @@ export function AuthFormLayout({
   fields,
   title,
   link,
-  formInstance,
-  onSubmit,
+  action,
   actions,
   error,
 }: {
@@ -31,9 +29,7 @@ export function AuthFormLayout({
   formInstance: UseFormReturn<
     z.infer<typeof signInFormSchema | typeof signUpFormSchema>
   >;
-  onSubmit: SubmitHandler<
-    z.infer<typeof signInFormSchema | typeof signUpFormSchema>
-  >;
+  action: (formData: FormData) => Promise<void>;
   error: ReactNode;
 }) {
   return (
@@ -43,16 +39,11 @@ export function AuthFormLayout({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...formInstance}>
-          <form
-            onSubmit={formInstance.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
-            {fields}
-            {!!error && error}
-            {actions}
-          </form>
-        </Form>
+        <form action={action} className="space-y-4">
+          {fields}
+          {!!error && error}
+          {actions}
+        </form>
       </CardContent>
       <CardFooter className="flex justify-center">{link}</CardFooter>
     </Card>

@@ -25,7 +25,6 @@ export const signUpFormSchema = z.object({
 
 export function SignUpForm() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
@@ -35,37 +34,39 @@ export function SignUpForm() {
     },
   });
 
-  async function onSubmit(_: z.infer<typeof signUpFormSchema>) {
-    setIsLoading(true);
+  useActionState(signUpAction, righn(undefined));
 
-    try {
-      // This is where you would typically make an API call to register the user
-      // For example:
-      // const response = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     name: values.name,
-      //     email: values.email,
-      //     password: values.password,
-      //   }),
-      // })
-
-      // if (!response.ok) throw new ErrorMessage('Registration failed')
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast("You've successfully signed up.");
-
-      // Redirect to signin page after successful registration
-      router.push("/signin");
-    } catch {
-      toast("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  // async function onSubmit(_: z.infer<typeof signUpFormSchema>) {
+  //   setIsLoading(true);
+  //
+  //   try {
+  //     // This is where you would typically make an API call to register the user
+  //     // For example:
+  //     // const response = await fetch('/api/auth/register', {
+  //     //   method: 'POST',
+  //     //   headers: { 'Content-Type': 'application/json' },
+  //     //   body: JSON.stringify({
+  //     //     name: values.name,
+  //     //     email: values.email,
+  //     //     password: values.password,
+  //     //   }),
+  //     // })
+  //
+  //     // if (!response.ok) throw new ErrorMessage('Registration failed')
+  //
+  //     // Simulate API call
+  //     await new Promise((resolve) => setTimeout(resolve, 1000));
+  //
+  //     toast("You've successfully signed up.");
+  //
+  //     // Redirect to signin page after successful registration
+  //     router.push("/signin");
+  //   } catch {
+  //     toast("Something went wrong. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
   return (
     <AuthFormLayout
@@ -89,7 +90,6 @@ export function SignUpForm() {
         />
       }
       formInstance={form}
-      onSubmit={onSubmit}
       error={<ErrorMessage error={right(null)} />}
     />
   );
