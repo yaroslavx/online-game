@@ -24,7 +24,7 @@ export const signInFormSchema = z.object({
   }),
 });
 
-export default function SignInPage() {
+export function SignInForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

@@ -58,7 +58,7 @@ export function SignUpForm() {
 
       toast("You've successfully signed up.");
 
-      // Redirect to sign-in page after successful registration
+      // Redirect to signin page after successful registration
       router.push("/signin");
     } catch {
       toast("Something went wrong. Please try again.");
