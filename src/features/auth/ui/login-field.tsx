@@ -6,13 +6,17 @@ import {
   FormMessage,
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
-import { FieldValues, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import * as z from "zod";
+import { signInFormSchema } from "@/features/auth/containers/sign-in-form";
+import { signUpFormSchema } from "@/features/auth/containers/sign-up-form";
 
 export function LoginField({
   formInstance,
 }: {
-  formInstance: UseFormReturn<z.infer<typeof formSchema>>;
+  formInstance: UseFormReturn<
+    z.infer<typeof signInFormSchema | typeof signUpFormSchema>
+  >;
 }) {
   return (
     <FormField

@@ -31,7 +31,9 @@ export function AuthFormLayout({
   formInstance: UseFormReturn<
     z.infer<typeof signInFormSchema | typeof signUpFormSchema>
   >;
-  onSubmit: SubmitHandler<FieldValues>;
+  onSubmit: SubmitHandler<
+    z.infer<typeof signInFormSchema | typeof signUpFormSchema>
+  >;
   error: ReactNode;
 }) {
   return (
