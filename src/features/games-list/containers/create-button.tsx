@@ -2,14 +2,13 @@
 
 import { Button } from "@/shared/ui/button";
 import { createGameAction } from "../actions/create-game";
-import { startTransition, useActionState } from "react";
+import { startTransition } from "react";
 import { mapLeft, right } from "@/shared/lib/either";
+import { useActionState } from "@/shared/lib/react";
 
 export function CreateButton() {
   const [state, dispatch, isPending] = useActionState(
     createGameAction,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     right(undefined),
   );
 

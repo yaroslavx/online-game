@@ -1,10 +1,11 @@
-import { Either, matchEither } from "@/shared/lib/either";
 import { Alert, AlertDescription } from "@/shared/ui/alert";
+import React from "react";
+import { Either, matchEither } from "@/shared/lib/either";
 
-export function ErrorMessage({ error }: { error: Either<string, null> }) {
+export function ErrorMessage({ error }: { error: Either<string, unknown> }) {
   return matchEither(error, {
     left: (error) => (
-      <Alert variant="destructive">
+      <Alert>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     ),

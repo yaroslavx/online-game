@@ -1,47 +1,43 @@
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
 } from "@/shared/ui/card";
-import { ReactNode } from "react";
-import { UseFormReturn } from "react-hook-form";
-import * as z from "zod";
-import { signInFormSchema } from "@/features/auth/containers/sign-in-form";
-import { signUpFormSchema } from "@/features/auth/containers/sign-up-form";
+
+import React from "react";
 
 export function AuthFormLayout({
+  actions,
   description,
   fields,
-  title,
   link,
-  action,
-  actions,
+  title,
   error,
+  action,
 }: {
   title: string;
   description: string;
-  fields: ReactNode;
-  actions: ReactNode;
-  link: ReactNode;
-  formInstance: UseFormReturn<
-    z.infer<typeof signInFormSchema | typeof signUpFormSchema>
-  >;
-  action: (formData: FormData) => Promise<void>;
-  error: ReactNode;
+  fields: React.ReactNode;
+  actions: React.ReactNode;
+  link: React.ReactNode;
+  error: React.ReactNode;
+  action: (formData: FormData) => void;
 }) {
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold text-center">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-center">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={action} className="space-y-4">
           {fields}
-          {!!error && error}
+          {error}
           {actions}
         </form>
       </CardContent>
