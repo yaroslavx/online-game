@@ -1,6 +1,6 @@
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import React, { useId } from "react";
+import { useId } from "react";
 
 export function AuthFields({
   errors,
