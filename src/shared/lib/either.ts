@@ -10,11 +10,11 @@ export type Right<R> = {
 
 export type Either<L, R> = Left<L> | Right<R>;
 
-export const left = <L>(error: L): Left<L> => ({
+export const left = <const L>(error: L): Left<L> => ({
   type: "left",
   error,
 });
-export const right = <R>(value: R): Right<R> => ({
+export const right = <const R>(value: R): Right<R> => ({
   type: "right",
   value,
 });
@@ -44,8 +44,8 @@ export const mapLeft = <R, L, L2>(
 export const matchEither = <L, R, V>(
   either: Either<L, R>,
   matchers: {
-    left: (error: L) => V;
-    right: (value: R) => V;
+    left: (error: NoInfer<L>) => V;
+    right: (value: NoInfer<R>) => V;
   },
 ): V => {
   if (either.type === "left") {

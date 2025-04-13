@@ -19,7 +19,7 @@ export const createUser = async ({
 
   const { hash, salt } = await passwordService.hashPassword(password);
 
-  const user = await userRepository.getUser({
+  const user = await userRepository.saveUser({
     id: cuid(),
     login,
     rating: DEFAULT_RATING,

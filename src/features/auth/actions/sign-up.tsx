@@ -1,6 +1,7 @@
 import { left, mapLeft } from "@/shared/lib/either";
 import { z } from "zod";
-import { createUser } from "@/entities/user/server";
+import { createUser, sessionService } from "@/entities/user/server";
+import { redirect } from "next/navigation";
 
 const formDataScheme = z.object({
   login: z.string().min(3),
@@ -13,10 +14,16 @@ export const signUpAction = async (state: unknown, formData: FormData) => {
   const result = formDataScheme.safeParse(data);
 
   if (!result.success) {
-    return left(`${result.error.message}`);
+    return left(`Validation error: ${result.error.message}`);
   }
 
   const createdUser = await createUser(result.data);
+
+  if (createdUser.type === "right") {
+    await sessionService.addSession(createdUser.value);
+
+    redirect("/");
+  }
 
   return mapLeft(createdUser, (error) => {
     return {
