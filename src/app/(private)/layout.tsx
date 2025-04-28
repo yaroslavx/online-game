@@ -11,7 +11,7 @@ export default async function PrivateLayout({
   const { session } = await sessionService.verifySession();
 
   return (
-    <div>
+    <div className="flex flex-col grow">
       <header className="px-10 py-4 flex flex-row gap-4 justify-between border-b border-b-primary/50 items-center">
         <div className="text-xl">Tic Tac Toe</div>
         <div className="flex items-center gap-4">

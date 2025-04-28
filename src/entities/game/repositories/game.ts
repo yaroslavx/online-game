@@ -51,6 +51,7 @@ function dbGameToGameEntity(
       return {
         id: game.id,
         creator,
+        field: fieldScheme.parse(game.field),
         status: game.status,
       } satisfies GameIdleEntity;
     case GameStatus.inProgress:
