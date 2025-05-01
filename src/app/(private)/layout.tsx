@@ -2,6 +2,7 @@ import { Button } from "@/shared/ui/button";
 import { ReactNode } from "react";
 import { sessionService } from "@/entities/user/server";
 import { redirect } from "next/navigation";
+import { routes } from "@/kernel/routes";
 
 export default async function PrivateLayout({
   children,
@@ -20,7 +21,7 @@ export default async function PrivateLayout({
             action={async () => {
               "use server";
               await sessionService.deleteSession();
-              redirect("/signin");
+              redirect(routes.signIn());
             }}
           >
             <Button>Sign out</Button>
