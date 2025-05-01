@@ -5,7 +5,7 @@ export const sseStream = ({
   onClose,
 }: {
   request: NextRequest;
-  onClose: () => void;
+  onClose?: () => void;
 }) => {
   const responseStream = new TransformStream();
   const writer = responseStream.writable.getWriter();
@@ -16,7 +16,7 @@ export const sseStream = ({
   };
 
   request.signal.addEventListener("abort", () => {
-    onClose();
+    onClose?.();
   });
 
   const response = new Response(responseStream.readable, {
