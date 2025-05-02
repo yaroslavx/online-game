@@ -1,24 +1,27 @@
-"use client";
-
 import { GameId } from "@/kernel/ids";
-import { GameLayout } from "@/features/game/ui/layout";
-import { GamePlayers } from "@/features/game/ui/players";
-import { GameStatus } from "@/features/game/ui/status";
-import { GameField } from "@/features/game/ui/field";
-import { useGame } from "@/features/game/model/use-game";
+import { GameClient } from "@/features/game/containers/game-client";
+import { getCurrentUser } from "@/entities/user/server";
+import { getGameById, startGame } from "@/entities/game/server";
+import { gameEvents } from "@/features/game/services/game-events";
+import { redirect } from "next/navigation";
 
-export function Game({ gameId }: { gameId: GameId }) {
-  const { game, isPending } = useGame(gameId);
+export async function Game({ gameId }: { gameId: GameId }) {
+  const user = await getCurrentUser();
 
-  if (!game || isPending) {
-    return <GameLayout status="Loading..." />;
+  let game = await getGameById(gameId);
+
+  if (!game) {
+    redirect("/");
   }
 
-  return (
-    <GameLayout
-      players={<GamePlayers game={game} />}
-      status={<GameStatus game={game} />}
-      field={<GameField game={game} />}
-    />
-  );
+  if (user) {
+    const startedGame = await startGame(gameId, user);
+
+    if (startedGame.type === "right") {
+      game = startedGame.value;
+      gameEvents.emit(startedGame.value);
+    }
+  }
+
+  return <GameClient initialGame={game} />;
 }
