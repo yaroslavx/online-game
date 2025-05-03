@@ -1,5 +1,6 @@
 import { GameDomain } from "@/entities/game";
 import { GameId } from "@/kernel/ids";
+import { EventsChannel } from "@/shared/lib/events";
 
 type GameEvent = {
   type: "game-changed";
@@ -9,29 +10,19 @@ type GameEvent = {
 type Listener = (game: GameEvent) => void;
 
 class GameEventsService {
-  listeners = new Map<GameId, Set<Listener>>();
+  eventsChannel = new EventsChannel("game");
 
-  addListener(gameId: GameId, listener: Listener) {
-    let listeners = this.listeners.get(gameId);
-
-    if (!listeners) {
-      listeners = new Set([listener]);
-      this.listeners.set(gameId, listeners);
-    } else {
-      listeners.add(listener);
-    }
-
-    return () => {
-      listeners.delete(listener);
-    };
+  async addListener(gameId: GameId, listener: Listener) {
+    return this.eventsChannel.consume(gameId, (data) => {
+      listener(data as GameEvent);
+    });
   }
 
   emit(game: GameDomain.GameEntity) {
-    const listeners = this.listeners.get(game.id) ?? new Set();
-
-    for (const listener of listeners) {
-      listener({ type: "game-changed", data: game });
-    }
+    return this.eventsChannel.emit(game.id, {
+      type: "game-changed",
+      data: game,
+    } satisfies GameEvent);
   }
 }
 

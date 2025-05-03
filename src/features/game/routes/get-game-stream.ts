@@ -16,7 +16,7 @@ export async function getGameStream(
     return new Response("Game not found", { status: 404 });
   }
 
-  const unsubscribe = gameEvents.addListener(game.id, (event) => {
+  const unsubscribe = await gameEvents.addListener(game.id, (event) => {
     write(event.data);
   });
 
