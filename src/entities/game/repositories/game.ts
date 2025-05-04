@@ -41,6 +41,31 @@ async function startGame(gameId: GameId, player: PlayerEntity) {
   );
 }
 
+async function saveGame(
+  game: GameInProgressEntity | GameOverEntity | GameOverDrawEntity,
+) {
+  const winnerId =
+    game.status === GameStatus.gameOver
+      ? await db.gamePlayer
+          .findFirstOrThrow({
+            where: { userId: game.winner.id },
+          })
+          .then((p) => p.id)
+      : undefined;
+
+  return dbGameToGameEntity(
+    await db.game.update({
+      where: { id: game.id },
+      data: {
+        status: game.status,
+        field: game.field,
+        winnerId: winnerId,
+      },
+      include: gameInclude,
+    }),
+  );
+}
+
 async function getGame(
   where?: GameWhereInput,
 ): Promise<GameEntity | undefined> {
@@ -128,4 +153,10 @@ export const dbPlayerToPlayer = (
   };
 };
 
-export const gameRepository = { gamesList, createGame, getGame, startGame };
+export const gameRepository = {
+  gamesList,
+  createGame,
+  getGame,
+  startGame,
+  saveGame,
+};
