@@ -12,13 +12,13 @@ export function GameClient({
 }: {
   initialGame: GameDomain.GameEntity;
 }) {
-  const { game = initialGame } = useGame(initialGame.id);
+  const { game = initialGame, step } = useGame(initialGame.id);
 
   return (
     <GameLayout
       players={<GamePlayers game={game} />}
       status={<GameStatus game={game} />}
-      field={<GameField game={game} />}
+      field={<GameField game={game} onCellClick={step} />}
     />
   );
 }

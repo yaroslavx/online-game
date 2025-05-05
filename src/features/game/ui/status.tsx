@@ -5,12 +5,12 @@ export function GameStatus({ game }: { game: GameDomain.GameEntity }) {
     case "idle":
       return <div className="text-lg">Waiting</div>;
     case "inProgress": {
-      const currentSymbol = GameDomain.getGameCurrentStep(game);
+      const currentSymbol = GameDomain.getGameCurrentSymbol(game);
 
       return <div className="text-lg">Move: {currentSymbol}</div>;
     }
     case "gameOver": {
-      const currentSymbol = GameDomain.getGameCurrentStep(game);
+      const currentSymbol = GameDomain.getGameCurrentSymbol(game);
 
       return <div className="text-lg">Winner: {currentSymbol}</div>;
     }
