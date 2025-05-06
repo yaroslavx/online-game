@@ -1,7 +1,8 @@
-import { doStep, PlayerEntity } from "@/entities/game/domain";
-import { gameRepository } from "@/entities/game/repositories/game";
 import { GameId } from "@/kernel/ids";
+import { doStep, PlayerEntity } from "../domain";
+import { gameRepository } from "../repositories/game";
 import { left, right } from "@/shared/lib/either";
+import { gameEvents } from "@/features/game/services/game-events";
 import { GameStatus } from "@prisma/client";
 
 export async function stepGame(
@@ -10,7 +11,6 @@ export async function stepGame(
   index: number,
 ) {
   const game = await gameRepository.getGame({ id: gameId });
-
   if (!game) {
     return left("game-not-found");
   }
@@ -23,11 +23,15 @@ export async function stepGame(
     return left("player-is-not-in-game");
   }
 
-  const stepResult = doStep(game, index, player);
+  const stepResult = doStep({ game, index, player });
 
   if (stepResult.type === "left") {
     return stepResult;
   }
 
-  return right(await gameRepository.saveGame(stepResult.value));
+  const newGame = await gameRepository.saveGame(stepResult.value);
+
+  await gameEvents.emit(newGame);
+
+  return right(newGame);
 }

@@ -1,29 +1,23 @@
 import { NextRequest } from "next/server";
 
-export const sseStream = ({
-  request,
-  onClose,
-}: {
-  request: NextRequest;
-  onClose?: () => void;
-}) => {
+export const sseStream = (req: NextRequest) => {
   const responseStream = new TransformStream();
   const writer = responseStream.writable.getWriter();
   const encoder = new TextEncoder();
 
-  const write = (data: unknown) => {
+  const write = (data: unknown) =>
     writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
-  };
 
-  request.signal.addEventListener("abort", () => {
-    onClose?.();
-  });
+  const addCloseListener = (onDisconnet: () => void) =>
+    void req.signal.addEventListener("abort", () => {
+      onDisconnet();
+    });
 
   const response = new Response(responseStream.readable, {
     headers: {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
-      "Cache-Control": "no-cache no-transform",
+      "Cache-Control": "no-cache, no-transform",
     },
   });
 
@@ -35,5 +29,6 @@ export const sseStream = ({
     response,
     write,
     close,
+    addCloseListener,
   };
 };

@@ -6,35 +6,31 @@ import { gameEvents } from "@/features/game/services/game-events";
 import { getCurrentUser } from "@/entities/user/server";
 
 export async function getGameStream(
-  request: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: GameId }> },
 ) {
   const { id } = await params;
-
-  const currentUser = await getCurrentUser();
+  const user = await getCurrentUser();
   const game = await getGameById(id);
 
-  if (!game || !currentUser) {
-    return new Response("Game not found", { status: 404 });
+  if (!game || !user) {
+    return new Response(`Game not found`, {
+      status: 404,
+    });
   }
 
-  const handleUnsubscribe = async () => {
-    await gameEvents.addListener(game.id, (event) => {
-      write(event.data);
-    });
-
-    const result = await surrenderGame(id, currentUser);
-    if (result.type === "right") {
-      gameEvents.emit(result.value);
-    }
-  };
-
-  const { write, response } = sseStream({
-    request,
-    onClose: handleUnsubscribe,
-  });
+  const { addCloseListener, response, write } = sseStream(req);
 
   write(game);
+
+  const unwatch = await gameEvents.addListener(game.id, (event) => {
+    write(event.data);
+  });
+
+  addCloseListener(async () => {
+    await surrenderGame(id, user);
+    unwatch();
+  });
 
   return response;
 }
