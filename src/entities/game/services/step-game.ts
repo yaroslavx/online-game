@@ -2,7 +2,7 @@ import { GameId } from "@/kernel/ids";
 import { doStep, PlayerEntity } from "../domain";
 import { gameRepository } from "../repositories/game";
 import { left, right } from "@/shared/lib/either";
-import { gameEvents } from "@/features/game/services/game-events";
+import { gameEvents } from "@/entities/game/services/game-events";
 import { GameStatus } from "@prisma/client";
 
 export async function stepGame(
@@ -31,7 +31,7 @@ export async function stepGame(
 
   const newGame = await gameRepository.saveGame(stepResult.value);
 
-  await gameEvents.emit(newGame);
+  await gameEvents.emit({ type: "game-changed", data: newGame });
 
   return right(newGame);
 }

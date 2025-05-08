@@ -3,6 +3,7 @@ import { GameStatus } from "@prisma/client";
 import { PlayerEntity } from "@/entities/game/domain";
 import cuid from "cuid";
 import { left, right } from "@/shared/lib/either";
+import { gameEvents } from "@/entities/game/server";
 
 export async function createGame(player: PlayerEntity) {
   const playerGames = await gameRepository.gamesList({
@@ -24,6 +25,8 @@ export async function createGame(player: PlayerEntity) {
     status: GameStatus.idle,
     field: Array(9).fill(null),
   });
+
+  await gameEvents.emit({ type: "game-created" });
 
   return right(createdGame);
 }

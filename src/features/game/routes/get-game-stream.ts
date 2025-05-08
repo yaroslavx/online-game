@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { sseStream } from "@/shared/lib/sse/server";
 import { getGameById, surrenderGame } from "@/entities/game/server";
 import { GameId } from "@/kernel/ids";
-import { gameEvents } from "@/features/game/services/game-events";
+import { gameEvents } from "@/entities/game/services/game-events";
 import { getCurrentUser } from "@/entities/user/server";
 
 export async function getGameStream(
@@ -23,7 +23,7 @@ export async function getGameStream(
 
   write(game);
 
-  const unwatch = await gameEvents.addListener(game.id, (event) => {
+  const unwatch = await gameEvents.addGameChangedListener(game.id, (event) => {
     write(event.data);
   });
 

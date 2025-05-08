@@ -3,6 +3,7 @@ import { gameRepository } from "@/entities/game/repositories/game";
 import { GameId } from "@/kernel/ids";
 import { left, right } from "@/shared/lib/either";
 import { GameStatus } from "@prisma/client";
+import { gameEvents } from "@/entities/game/services/game-events";
 
 export async function startGame(gameId: GameId, player: PlayerEntity) {
   const game = await gameRepository.getGame({ id: gameId });
@@ -19,5 +20,9 @@ export async function startGame(gameId: GameId, player: PlayerEntity) {
     return left("creator-can-not-start-game" as const);
   }
 
-  return right(await gameRepository.startGame(gameId, player));
+  const newGame = await gameRepository.startGame(gameId, player);
+
+  await gameEvents.emit({ type: "game-changed", data: newGame });
+
+  return right(newGame);
 }

@@ -3,6 +3,7 @@ import { gameRepository } from "@/entities/game/repositories/game";
 import { GameId } from "@/kernel/ids";
 import { left, right } from "@/shared/lib/either";
 import { GameStatus } from "@prisma/client";
+import { gameEvents } from "@/entities/game/services/game-events";
 
 export async function surrenderGame(gameId: GameId, player: PlayerEntity) {
   const game = await gameRepository.getGame({ id: gameId });
@@ -19,11 +20,13 @@ export async function surrenderGame(gameId: GameId, player: PlayerEntity) {
     return left("player-is-not-in-game" as const);
   }
 
-  return right(
-    await gameRepository.saveGame({
-      ...game,
-      status: GameStatus.gameOver,
-      winner: game.players.find((p) => p.id !== player.id)!,
-    }),
-  );
+  const newGame = await gameRepository.saveGame({
+    ...game,
+    status: GameStatus.gameOver,
+    winner: game.players.find((p) => p.id !== player.id)!,
+  });
+
+  await gameEvents.emit({ type: "game-changed", data: newGame });
+
+  return right(newGame);
 }
