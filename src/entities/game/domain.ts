@@ -59,13 +59,6 @@ export const getGameCurrentSymbol = (
   return symbols % 2 === 0 ? GameSymbol.X : GameSymbol.O;
 };
 
-export const getNextSymbol = (sameSymbol: GameSymbol) => {
-  if (sameSymbol === GameSymbol.X) {
-    return GameSymbol.O;
-  }
-  return GameSymbol.X;
-};
-
 export const getPlayerSymbol = (
   player: PlayerEntity,
   game: GameInProgressEntity | GameOverEntity,
